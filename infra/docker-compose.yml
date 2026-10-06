@@ -1,0 +1,55 @@
+# Ambiente completo do Intrega com custo zero.
+#
+#   Só o banco (para rodar a API pelo `dotnet run`):   docker compose up -d banco
+#   Banco + API:                                     docker compose up -d --build
+#   Com OSRM próprio (após rodar osrm/preparar-osrm.sh): docker compose --profile osrm up -d
+#
+# Sem o perfil "osrm", a API usa os servidores públicos gratuitos do routing.openstreetmap.de.
+
+name: intrega
+
+services:
+  banco:
+    image: docker.io/library/postgres:17-alpine
+    environment:
+      POSTGRES_DB: intrega
+      POSTGRES_USER: intrega
+      POSTGRES_PASSWORD: ${SENHA_DO_BANCO:-intrega}
+    ports:
+      - "5432:5432"
+    volumes:
+      - dados-do-banco:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U intrega"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ../backend
+    depends_on:
+      banco:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__Intrega: "Host=banco;Database=intrega;Username=intrega;Password=${SENHA_DO_BANCO:-intrega}"
+      # Em produção defina uma chave forte em .env (nunca versionar).
+      Autenticacao__ChaveDeAssinatura: ${CHAVE_JWT:-troque-esta-chave-em-producao-0123456789abcdef}
+      Roteirizacao__Osrm__UrlCarro: ${OSRM_CARRO:-https://routing.openstreetmap.de/routed-car/}
+    ports:
+      - "5080:8080"
+    volumes:
+      - arquivos-da-api:/dados
+
+  # OSRM próprio (carro). Rode antes: ./osrm/preparar-osrm.sh sudeste
+  # e defina OSRM_CARRO=http://osrm-carro:5000/ no .env.
+  osrm-carro:
+    image: ghcr.io/project-osrm/osrm-backend:v5.27.1
+    profiles: ["osrm"]
+    command: osrm-routed --algorithm mld --max-table-size 1000 /dados/regiao.osrm
+    volumes:
+      - ./osrm/dados:/dados
+    ports:
+      - "5000:5000"
+
+volumes:
+  dados-do-banco:
+  arquivos-da-api:
