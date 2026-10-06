@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Modulos\Etiquetas\Intrega.Modulos.Etiquetas\Intrega.Modulos.Etiquetas.csproj" />
+    <ProjectReference Include="..\..\src\Modulos\Importacao\Intrega.Modulos.Importacao\Intrega.Modulos.Importacao.csproj" />
+    <ProjectReference Include="..\..\src\Modulos\Roteirizacao\Intrega.Modulos.Roteirizacao\Intrega.Modulos.Roteirizacao.csproj" />
+    <ProjectReference Include="..\..\src\Modulos\Geocodificacao\Intrega.Modulos.Geocodificacao\Intrega.Modulos.Geocodificacao.csproj" />
+    <ProjectReference Include="..\..\src\Modulos\Rastreamento\Intrega.Modulos.Rastreamento\Intrega.Modulos.Rastreamento.csproj" />
+    <ProjectReference Include="..\..\src\Modulos\Identidade\Intrega.Modulos.Identidade\Intrega.Modulos.Identidade.csproj" />
+  </ItemGroup>
+</Project>
