@@ -1,0 +1,3 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Tipos puros compartilhados por todos os módulos. Sem dependências de infraestrutura. -->
+</Project>
