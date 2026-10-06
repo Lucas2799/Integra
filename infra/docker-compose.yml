@@ -2,6 +2,8 @@
 #
 #   Só o banco (para rodar a API pelo `dotnet run`):   docker compose up -d banco
 #   Banco + API:                                     docker compose up -d --build
+#   Ver logs da API:                                 docker compose logs -f api
+#   Parar (mantém os dados) / apagar o banco:        docker compose down / docker compose down -v
 #   Com OSRM próprio (após rodar osrm/preparar-osrm.sh): docker compose --profile osrm up -d
 #
 # Sem o perfil "osrm", a API usa os servidores públicos gratuitos do routing.openstreetmap.de.
@@ -30,6 +32,8 @@ services:
       banco:
         condition: service_healthy
     environment:
+      # Development: documentação em /documentacao e compras de teste liberadas. Em servidor use Production.
+      ASPNETCORE_ENVIRONMENT: ${AMBIENTE:-Development}
       ConnectionStrings__Intrega: "Host=banco;Database=intrega;Username=intrega;Password=${SENHA_DO_BANCO:-intrega}"
       # Em produção defina uma chave forte em .env (nunca versionar).
       Autenticacao__ChaveDeAssinatura: ${CHAVE_JWT:-troque-esta-chave-em-producao-0123456789abcdef}
