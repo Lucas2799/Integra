@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Compartilhado\Intrega.Infraestrutura\Intrega.Infraestrutura.csproj" />
+    <ProjectReference Include="..\..\Paradas\Intrega.Modulos.Paradas.Contratos\Intrega.Modulos.Paradas.Contratos.csproj" />
+    <ProjectReference Include="..\..\Identidade\Intrega.Modulos.Identidade.Contratos\Intrega.Modulos.Identidade.Contratos.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Intrega.TestesUnitarios" />
+  </ItemGroup>
+</Project>
