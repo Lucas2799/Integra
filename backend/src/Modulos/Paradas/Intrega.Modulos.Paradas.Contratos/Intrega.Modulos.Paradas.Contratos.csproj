@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Compartilhado\Intrega.Nucleo\Intrega.Nucleo.csproj" />
+    <ProjectReference Include="..\..\Geocodificacao\Intrega.Modulos.Geocodificacao.Contratos\Intrega.Modulos.Geocodificacao.Contratos.csproj" />
+  </ItemGroup>
+</Project>
