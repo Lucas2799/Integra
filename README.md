@@ -13,20 +13,51 @@ lê a etiqueta do pacote, importa planilhas e guia o entregador até a porta.
 
 ## Rodando localmente
 
-Pré-requisitos: .NET SDK 10, Flutter 3.44+, Docker ou Podman.
+Há duas formas de subir o backend. As duas usam a porta **5080** e aplicam as migrations do banco sozinhas.
+
+### Opção A: tudo em container (só precisa de Docker ou Podman)
+
+Indicada para testar o app ou a API sem instalar o .NET.
 
 ```bash
-# 1. Banco de dados
-cd infra && docker compose up -d banco
+cd infra
+cp .env.exemplo .env                 # opcional: senha do banco, chave JWT, ambiente
+docker compose up -d --build         # sobe Postgres + API (o primeiro build leva alguns minutos)
+docker compose ps                    # os dois devem estar "Up"; o banco como "healthy"
+curl http://localhost:5080/saude     # deve responder "Healthy"
+```
 
-# 2. API (aplica as migrations sozinha) → documentação em http://localhost:5080/documentacao
+- Documentação interativa da API: http://localhost:5080/documentacao
+- Logs da API: `docker compose logs -f api`
+- Depois de mudar o código do backend: `docker compose up -d --build api`
+- Parar tudo: `docker compose down` (os dados ficam no volume; `docker compose down -v` apaga também o banco)
+
+Por padrão o container roda em `Development`, com a documentação e as compras de teste liberadas.
+Em servidor, defina `AMBIENTE=Production` e uma `CHAVE_JWT` forte no `infra/.env`.
+
+> O build da imagem baixa o SDK do .NET (~1 GB) e compila tudo do zero: em máquinas com pouca memória,
+> feche a API rodando localmente antes de construir.
+
+### Opção B: API pelo .NET (melhor para desenvolver o backend)
+
+Pré-requisito: .NET SDK 10. Inicia mais rápido e permite depurar pela IDE.
+
+```bash
+cd infra && docker compose up -d banco               # só o banco em container
 cd ../backend && dotnet run --project src/Intrega.Api
+```
 
-# 3. Conferir o fluxo completo do entregador
-../infra/teste-de-fumaca.sh
+Não rode as duas opções ao mesmo tempo: ambas usam a porta 5080. Pare o container da API antes
+(`docker compose stop api`).
 
-# 4. App (emulador Android enxerga o computador em 10.0.2.2)
-cd ../mobile/intrega && flutter run --dart-define=URL_API=http://10.0.2.2:5080
+### Conferir e rodar o app
+
+```bash
+# Percorre o dia de um entregador contra a API que estiver no ar (opção A ou B)
+./infra/teste-de-fumaca.sh                     # ou: ./infra/teste-de-fumaca.sh http://outro-endereco:5080
+
+# App Flutter (precisa do Flutter 3.44+). O emulador Android enxerga o computador em 10.0.2.2
+cd mobile/intrega && flutter run --dart-define=URL_API=http://10.0.2.2:5080
 #    Celular físico: use o IP do computador na rede, ex.: --dart-define=URL_API=http://192.168.0.10:5080
 ```
 
